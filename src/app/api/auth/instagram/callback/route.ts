@@ -1,11 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {
-  const { url } = req;
+  const { searchParams } = new URL(req.url);
+  const rawCode = searchParams.get('code');
 
-  // Log the Instagram callback URL
-  console.log('Instagram OAuth callback URL:', url);
+  if (!rawCode) {
+    return NextResponse.json({ error: 'No code provided' }, { status: 400 });
+  }
 
-  // Respond with a success message
+  // the code can have a trailing fragment like #_
+  const code = rawCode.split('#')[0];
+
+  console.log('Instagram authorization code:', code);
+
   return NextResponse.json({ message: 'Callback received' });
 }
